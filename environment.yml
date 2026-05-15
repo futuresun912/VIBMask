@@ -1,0 +1,20 @@
+# Conda environment for VIBMask. Use:
+#   conda env create -f environment.yml
+#   conda activate vibmask
+# Then install the package itself:
+#   pip install -e .
+name: vibmask
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.10
+  - pip
+  - numpy>=1.23
+  - scipy>=1.10
+  - scikit-learn>=1.2
+  - pytorch>=2.0
+  - cpuonly        # remove this line and add `cudatoolkit` / `pytorch-cuda=<ver>` for GPU
+  - pip:
+    - pytest>=7.0

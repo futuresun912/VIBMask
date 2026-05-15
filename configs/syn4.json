@@ -1,0 +1,45 @@
+{
+  "_documentation": "Best VIBMask hyperparameters for SYN4 (paper \u00a75.1). Reproduces: TPR=99.09%, FDR=4.51%, CFSR=100.00%, test_acc=0.8311. Selected via Optuna TPE over 130-180 trials.",
+  "dataset": "syn4",
+  "data_alpha": 3.0,
+  "n_train": 5000,
+  "n_test": 5000,
+  "n_seeds": 5,
+  "train_config": {
+    "batch_size": 32,
+    "val_fraction": 0.1,
+    "learning_rate": 0.00034999917226633063,
+    "weight_decay": 0.0001,
+    "max_iters": 5000,
+    "early_stop_patience": 1000,
+    "num_selectors": 5,
+    "sigma": 0.7138004992909852,
+    "train_sigma": false,
+    "sel_hidden": [
+      100,
+      100
+    ],
+    "pred_hidden": [
+      512,
+      512,
+      512
+    ],
+    "layer_norm": true,
+    "activation": "relu",
+    "pred_dropout": 0.0,
+    "beta": 0.01,
+    "gamma": 0.01,
+    "warmup_iters": 1000,
+    "gate_type": "hard_concrete",
+    "hc_beta": 0.7167837145188574,
+    "ema_decay": 0.99,
+    "lr_schedule": "cosine",
+    "label_smoothing": 0.0,
+    "grad_clip": 1.0,
+    "bootstrap": true,
+    "classification": true,
+    "log_every": 500,
+    "device": "cpu"
+  },
+  "soft_inference": false
+}

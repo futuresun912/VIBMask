@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vibmask"
+version = "1.0.0"
+description = "VIBMask: Instance-wise feature selection via variational information bottleneck (IJCAI-ECAI 2026)."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [{name = "VIBMask authors"}]
+keywords = ["feature-selection", "interpretability", "variational-information-bottleneck", "tabular-learning"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "numpy>=1.23",
+  "scipy>=1.10",
+  "scikit-learn>=1.2",
+  "torch>=2.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["vibmask*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

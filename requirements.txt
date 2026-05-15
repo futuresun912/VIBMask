@@ -1,0 +1,6 @@
+# Minimum versions verified on Python 3.10 / 3.12.
+# Pinning is intentionally loose so the code remains forward-compatible.
+numpy>=1.23
+scipy>=1.10
+scikit-learn>=1.2
+torch>=2.0

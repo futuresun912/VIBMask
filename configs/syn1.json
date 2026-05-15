@@ -1,0 +1,47 @@
+{
+  "_documentation": "Best VIBMask hyperparameters for SYN1 (paper \u00a75.1). Reproduces: TPR=100.00%, FDR=0.00%, CFSR=0.00%, test_acc=0.8090. Selected via Optuna TPE over 130-180 trials.",
+  "dataset": "syn1",
+  "data_alpha": 5.0,
+  "n_train": 5000,
+  "n_test": 5000,
+  "n_seeds": 5,
+  "train_config": {
+    "batch_size": 32,
+    "val_fraction": 0.1,
+    "learning_rate": 1.8476164116838657e-05,
+    "weight_decay": 0.0001,
+    "max_iters": 10000,
+    "early_stop_patience": 1000,
+    "num_selectors": 4,
+    "sigma": 0.8908841764950979,
+    "train_sigma": false,
+    "sel_hidden": [
+      128,
+      128,
+      128,
+      128
+    ],
+    "pred_hidden": [
+      256,
+      256,
+      10
+    ],
+    "layer_norm": false,
+    "activation": "relu",
+    "pred_dropout": 0.0,
+    "beta": 0.001,
+    "gamma": 0.0,
+    "warmup_iters": 1000,
+    "gate_type": "hard_concrete",
+    "hc_beta": 0.508424042164264,
+    "ema_decay": 0.99,
+    "lr_schedule": "constant",
+    "label_smoothing": 0.0,
+    "grad_clip": 1.0,
+    "bootstrap": true,
+    "classification": true,
+    "log_every": 500,
+    "device": "cpu"
+  },
+  "soft_inference": false
+}
