@@ -11,9 +11,8 @@ a variational lower bound on the information-bottleneck objective.
 
 This repository contains the reference implementation for the **synthetic
 datasets (Syn1–Syn6)** experiments reported in §5.1 / Table 1 of the
-paper. Real-world experiment code is intentionally kept out of this
-release; please refer to the paper's technical appendix for that
-description.
+paper. Please refer to the paper's technical appendix for the full 
+experimental setup.
 
 ---
 
