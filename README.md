@@ -249,7 +249,7 @@ You can override any of these fields on the command line for
 ```bibtex
 @inproceedings{vibmask2026,
   title     = {Learning Local Feature Masks with Variational Information Bottleneck},
-  author    = {VIBMask authors},
+  author    = {Lu Sun and Jun Sakuma},
   booktitle = {Proceedings of the 35th International Joint Conference on Artificial Intelligence (IJCAI-ECAI 2026)},
   year      = {2026}
 }
