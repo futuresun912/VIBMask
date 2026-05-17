@@ -165,26 +165,6 @@ Expected (mean across 3 seeds, full 60k MNIST):
 | 30        | ~600            | ~0.94    |
 | 50        | ~900            | ~0.96    | 
 
-The extension activates these `TrainConfig` fields (all default off →
-the synthetic pipeline is unchanged):
-
-| Field | Purpose |
-|---|---|
-| `selector_prior_logits` | length-d bias added to every selector's μ output (variance log-prior, optional hard-prune via −1000 entries). |
-| `feature_weight_offset` | per-feature (or scalar) additive offset on ω_i (L0-style penalty). |
-| `gamma_anneal_to` | linear γ-annealing over post-warmup window. |
-| `aux_soft_pred_weight` | auxiliary CE loss on `predictor(x · sigmoid(μ_mean))`. |
-| `multi_k_targets` | sum prediction losses over several top-k extractions. |
-| `train_time_select_patch` + `train_time_img_hw` + `train_time_patch_kernel` | dilate each picked pixel into a kernel × kernel patch. |
-
-And these `predict_with_masks(...)` arguments (all opt-in):
-
-| Arg | Purpose |
-|---|---|
-| `top_k`, `select_patch`, `patch_kernel`, `img_hw` | per-instance top-k mask + 2D patch dilation. |
-| `nms_radius` | spatial non-max suppression (force diversity). |
-| `prior_score`, `prior_blend` | blend an external per-feature prior (e.g. `vibmask.lasso_importance`) into the top-k ranking. |
-
 See `examples/mnist/README.md` for full mechanism + diagnostic.
 
 The MNIST loader and feature-importance helpers are exposed at the
