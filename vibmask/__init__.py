@@ -9,6 +9,11 @@ Public API:
     TrainConfig, train_vibmask       - training loop
     predict_with_masks               - inference helper returning predictions + masks
     feature_metrics, accuracy        - TPR / FDR / CFSR / ACC metrics (Appendix A6.4)
+
+Optional MNIST extension (see examples/mnist/):
+    MnistDataset, load_mnist                  - digits-MNIST loader
+    lasso_importance, variance_log_prior,
+    hard_prune_prior                          - per-feature priors for selector
 """
 
 from .data import SynDataset, generate_synthetic
@@ -19,6 +24,10 @@ from .loss import (
     gaussian_cdf,
 )
 from .metrics import accuracy, feature_metrics, summarise
+from .mnist_data import (
+    MnistDataset, load_mnist, lasso_importance,
+    variance_log_prior, hard_prune_prior,
+)
 from .model import Predictor, Selector, VIBMask
 from .train import TrainConfig, TrainHistory, predict_with_masks, train_vibmask
 
@@ -33,5 +42,8 @@ __all__ = [
     "compute_feature_weights", "gate_regularizer", "bootstrap_weights", "gaussian_cdf",
     # metrics
     "accuracy", "feature_metrics", "summarise",
+    # MNIST extension (opt-in)
+    "MnistDataset", "load_mnist",
+    "lasso_importance", "variance_log_prior", "hard_prune_prior",
 ]
 __version__ = "1.0.0"

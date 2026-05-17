@@ -165,6 +165,16 @@ class VIBMask(nn.Module):
             input_dim, output_dim, pred_hidden, activation=activation,
             layer_norm=layer_norm, dropout=pred_dropout,
         )
+        # Optional warm-up / hard-prune prior added as a constant bias to
+        # every selector's μ output. Default zeros = no prior (original
+        # behaviour). Use `set_selector_prior()` to inject a length-d
+        # vector (e.g. variance log-prior or Lasso scores) for the
+        # MNIST-style extensions. A very negative value (~-1000) pins the
+        # corresponding gate to ≈0 — used by V16-A hard-prune.
+        self.register_buffer(
+            "_selector_prior",
+            torch.zeros(input_dim, dtype=torch.float32),
+        )
 
     @property
     def sigma(self) -> torch.Tensor:
@@ -172,9 +182,26 @@ class VIBMask(nn.Module):
             return torch.nn.functional.softplus(self._raw_sigma) + 1e-3
         return self._raw_sigma
 
+    def set_selector_prior(self, prior: torch.Tensor) -> None:
+        """Inject a length-d bias added to every selector's μ output.
+
+        See `TrainConfig.selector_prior_logits`. Default value is all
+        zeros, which makes the prior a no-op (original VIBMask behaviour).
+        """
+        if prior.shape != self._selector_prior.shape:
+            raise ValueError(
+                f"selector prior shape {tuple(prior.shape)} != input_dim "
+                f"{tuple(self._selector_prior.shape)}"
+            )
+        self._selector_prior = prior.to(self._selector_prior.device).float()
+
     def selector_logits(self, x: torch.Tensor) -> torch.Tensor:
-        """Stack of per-selector logits μ. Shape: [K, B, d]."""
-        return torch.stack([s(x) for s in self.selectors], dim=0)
+        """Stack of per-selector logits μ. Shape: [K, B, d].
+
+        Adds `_selector_prior` (default zeros — no-op) as a constant bias.
+        """
+        mus = torch.stack([s(x) for s in self.selectors], dim=0)
+        return mus + self._selector_prior.view(1, 1, -1)
 
     def gates_from_logits(self, mus: torch.Tensor, stochastic: bool,
                           gate_type: str = "gaussian_clip",

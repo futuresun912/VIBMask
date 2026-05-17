@@ -14,6 +14,11 @@ datasets (Syn1–Syn6)** experiments reported in §5.1 / Table 1 of the
 paper. Please refer to the paper's technical appendix for the full 
 experimental setup.
 
+An optional **digits-MNIST extension** reproducing the paper's Fig. 3
+results is provided under `examples/mnist/`. The extension activates a
+handful of opt-in `TrainConfig` fields (default off — synthetic
+behaviour unchanged); see [examples/mnist/README.md](examples/mnist/README.md).
+
 ---
 
 ## Contents
@@ -35,8 +40,13 @@ vibmask/
 │   ├── syn5.json
 │   └── syn6.json
 ├── examples/
-│   ├── demo_synthetic.py      # run VIBMask on one dataset (CLI)
-│   └── reproduce_table1.py    # run all six datasets, print Table 1
+│   ├── demo_synthetic.py      # run VIBMask on one synthetic dataset (CLI)
+│   ├── reproduce_table1.py    # run all six datasets, print Table 1
+│   └── mnist/                 # OPTIONAL: digits-MNIST extension (paper Fig. 3)
+│       ├── demo_mnist.py
+│       ├── configs/mnist_v14a.json     # strongest recipe
+│       ├── configs/mnist_baseline.json # paper-like baseline (no extensions)
+│       └── README.md
 ├── tests/                     # smoke tests
 ├── pyproject.toml             # package metadata + dependencies
 ├── requirements.txt           # pip dependency list
@@ -103,7 +113,7 @@ Config: configs/syn1.json
 ### Reproduce Table 1 (all six datasets)
 
 ```bash
-python examples/reproduce_table1.py
+ipython examples/reproduce_table1.py
 ```
 
 Default settings (5 seeds × 6 datasets) take ~30–60 minutes on a single
@@ -132,6 +142,60 @@ following published numbers within seed-to-seed variance:
 
 Numbers above are the mean over 5 independent seeds with `n_train =
 n_test = 5000` and the per-dataset configurations under `configs/`.
+
+## Optional: digits-MNIST (paper Fig. 3)
+
+The folder `examples/mnist/` contains the **strongest VIBMask
+configuration on digits-MNIST**. It uses the same core VIBMask
+algorithm but activates a few opt-in extensions to handle the H-bias
+of image features (always-zero borders) and to match the paper's
+patch-based x-axis semantic.
+
+```bash
+pip install scikit-learn       # required by the MNIST loader
+python examples/mnist/demo_mnist.py --config mnist_v14a
+```
+
+Expected (mean across 3 seeds, full 60k MNIST):
+
+| k (picks) | n active pixels | Test acc |
+|-----------|-----------------|----------|
+| 10        | ~250            | ~0.86    |
+| 20        | ~430            | ~0.92    |
+| 30        | ~600            | ~0.94    |
+| 50        | ~900            | ~0.96    | 
+
+The extension activates these `TrainConfig` fields (all default off →
+the synthetic pipeline is unchanged):
+
+| Field | Purpose |
+|---|---|
+| `selector_prior_logits` | length-d bias added to every selector's μ output (variance log-prior, optional hard-prune via −1000 entries). |
+| `feature_weight_offset` | per-feature (or scalar) additive offset on ω_i (L0-style penalty). |
+| `gamma_anneal_to` | linear γ-annealing over post-warmup window. |
+| `aux_soft_pred_weight` | auxiliary CE loss on `predictor(x · sigmoid(μ_mean))`. |
+| `multi_k_targets` | sum prediction losses over several top-k extractions. |
+| `train_time_select_patch` + `train_time_img_hw` + `train_time_patch_kernel` | dilate each picked pixel into a kernel × kernel patch. |
+
+And these `predict_with_masks(...)` arguments (all opt-in):
+
+| Arg | Purpose |
+|---|---|
+| `top_k`, `select_patch`, `patch_kernel`, `img_hw` | per-instance top-k mask + 2D patch dilation. |
+| `nms_radius` | spatial non-max suppression (force diversity). |
+| `prior_score`, `prior_blend` | blend an external per-feature prior (e.g. `vibmask.lasso_importance`) into the top-k ranking. |
+
+See `examples/mnist/README.md` for full mechanism + diagnostic.
+
+The MNIST loader and feature-importance helpers are exposed at the
+top-level package:
+
+```python
+from vibmask import (
+    load_mnist, lasso_importance,
+    variance_log_prior, hard_prune_prior,
+)
+```
 
 ## Method summary
 
